@@ -1,0 +1,174 @@
+{% extends "./plantilla.html"%}
+  {% load static %}
+  {%block contenido%}
+
+    <h1>LISTADO DE PEDIDOS</h1>
+    <br>
+    <ul>
+
+        <div class="row">
+
+              <div class="col-md-5" style="overflow-y: auto; max-height: 400px;">
+                <form action="/guardarPedido/" method="post" enctype="multipart/form-data" id="frm_nuevo_pedido">
+                    {% csrf_token %}
+                    <b>SELECCIONE EL CLIENTE:</b>
+
+                    <select class="form-control" name="id_cliente" required>
+                      <option value="">--SELECCIONE EL CLIENTE  </option>
+                      {% for cliente in clientes %}
+                      <option value="{{cliente.id_bg}}">
+                        {{cliente.nombre_bg}}-{{cliente.apellido_bg}}
+                      </option>
+                      {% endfor %}
+                    </select>
+
+                    <br>
+                      <b>FECHA:</b>
+                      <input type="date" name="fecha_bg" value="" class="form-control" placeholder="Ingrese la fecha " required>
+                      <br>
+                      <b>ESTADO: </b>
+                      <input type="text" name="estado_bg" id="estado_bg" class="form-control" placeholder="Ingrese el estado(Disponible-No disponible)" required>
+                      <br>
+                      <b>OBSERVACIONES:</b>
+                      <input type="text" name="observaciones_bg" value="" id="observaciones_bg" placeholder="Ingrese las obsevaciones" class="form-control" required>
+                        <br>
+
+                    <center>
+                        <button type="submit" name="button" class="btn btn-primary">Guardar</button>
+                        &nbsp;&nbsp;&nbsp;
+                        &nbsp;&nbsp;&nbsp;
+                        &nbsp;&nbsp;&nbsp;
+                        <button type="submit" name="button" class="btn btn-danger">Cancelar</button>
+                    </center>
+                </form>
+            </div>
+            <div class="col-md-7">
+        <div class="d-flex justify-content-center align-items-center">
+          <img class="imagen img-fluid" src="{% static 'img/uni.png' %}" alt="" style="max-width: 800px; height: auto;">
+        </div>
+        <br>
+                <table class="table" id="tbl_pedidos">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>FECHA</th>
+                            <th>ESTADO</th>
+                            <th>OBSERVACIONES</th>
+                            <th>CLIENTE</th>
+
+                            <th>ACCIONES</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for pedido in pedidos %}
+                            <tr>
+                                <td>{{ pedido.id_bg }}</td>
+                                <td>{{ pedido.fecha_bg }}</td>
+                                <td>{{ pedido.estado_bg }}</td>
+                                <td>{{ pedido.observaciones_bg }}</td>
+                                <td>{{pedido.cliente_bg.nombre_bg}}</td>
+
+                                <td>
+                                    <a href="/editarPedido/{{pedido.id_bg}}" class="btn btn-warning">Editar</a>
+                                    <a href="javascript:void(0)"
+                                    onclick="eliminarPedido('/eliminarPedido/{{pedido.id_bg}}');"class="btn btn-danger">Eliminar</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <!-- Agregar una fila para la imagen debajo de la tabla -->
+            <br>
+
+
+    </ul>
+
+    <script type="text/javascript">
+function eliminarPedido(url) {
+  iziToast.question({
+      timeout: 15000,
+      close: true,
+      overlay: true,
+      displayMode: 'once',
+      id: 'question',
+      zindex: 999,
+      title: 'CONFIRMACIÓN',
+      message: '¿Está seguro de eliminar el cliente seleccionado?',
+      position: 'center',
+      buttons: [
+          ['<button><b>SI</b></button>', function (instance, toast) {
+              instance.hide({ transitionOut: 'fadeOut' }, toast, 'button');
+              window.location.href=url;
+          }, true],
+          ['<button>NO</button>', function (instance, toast) {
+
+              instance.hide({ transitionOut: 'fadeOut' }, toast, 'button');
+
+          }],
+      ]
+  });
+}
+</script>
+<script type="text/javascript">
+   $("#frm_nuevo_pedido").validate({
+     rules:{
+           "id_provincia":{
+             required:true
+           },
+       "fecha_bg":{
+         required:true,
+         date:true
+
+       },
+       "estado_bg":{
+         required:true,
+       },
+       "observaciones_bg":{
+         required:true
+       }
+
+
+     },
+     messages:{
+       "id_cliente":{
+             required:"POR FAVOR SELECCIONE EL CLIENTE"
+           },
+
+       "fecha_bg":{
+         required:"DEBE INGRESAR LA FECHA DEL PEDIDO",
+         date:"SIGA EL MODELO"
+
+       },
+       "estado_bg": {
+         required: "DEBE INGRESAR EL ESTADO DEL PEDIDO",
+       },
+       "observaciones_bg":{
+         required:"DEBE INGRESAR LA OBSERVACION DEL PEDIDO"
+
+       }
+
+     }
+   });
+</script>
+
+    <script type="text/javascript">
+           //let table = new DataTable('#tbl_clientes');
+            $('#tbl_pedidos').DataTable( {
+              "language": {
+                "url": "https://cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json"
+            },
+              dom: 'Bfrtip',
+              buttons: [
+                  {
+                      extend: 'pdfHtml5',
+                      messageTop: 'REPORTE DE CLIENTES - DJANGO Y DATATABLES.'
+                  },
+                  'print',
+                  'csv'
+              ]
+            } );
+          </script>
+
+
+  {%endblock%}

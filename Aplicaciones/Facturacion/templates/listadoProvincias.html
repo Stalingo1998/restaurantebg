@@ -1,0 +1,166 @@
+{% extends "./plantilla.html"%}
+  {% load static %}
+  {%block contenido%}
+
+    <h1>LISTADO DE PROVINCIAS</h1>
+    <br>
+    <ul>
+
+        <div class="row">
+          <div class="col-md-5" style="overflow-y: auto; max-height: 400px;">
+                <form action="guardarProvincia/" method="post" enctype="multipart/form-data" id="frm_nuevo_provincia">
+                    {% csrf_token %}
+                    <br>
+                    <b>NOMBRE:</b>
+                    <input type="text" name="nombre_bg" value="" id="nombre_bg" placeholder="Ingrese el nombre" class="form-control" required>
+                    <br>
+                    <b>POBLACION:</b>
+                    <input type="number" name="poblacion_bg" value="" id="poblacion_bg" placeholder="Ingrese la población" class="form-control" required>
+                    <br>
+                    <b>CAPITAL:</b>
+                    <input type="text" name="capital_bg" value="" id="capital_bg" placeholder="Ingrese la capital" class="form-control" required>
+                    <br>
+                    <b>FOTOGRAFIA:</b>
+                    <input type="file" name="fotografia" accept="image/*" id="fotografia" required>
+                    <br>
+                    <center>
+                        <button type="submit" name="button" class="btn btn-primary">Guardar</button>
+                        &nbsp;&nbsp;&nbsp;
+                        &nbsp;&nbsp;&nbsp;
+                        &nbsp;&nbsp;&nbsp;
+                        <button type="submit" name="button" class="btn btn-danger">Cancelar</button>
+                    </center>
+                </form>
+            </div>
+            <div class="col-md-7">
+        <div class="d-flex justify-content-center align-items-center">
+          <img class="imagen img-fluid" src="{% static 'img/uni.png' %}" alt="" style="max-width: 800px; height: auto;">
+        </div>
+        <br>
+                <table class="table" id="tbl_provincias">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>NOMBRE</th>
+                            <th>POBLACION</th>
+                            <th>CAPITAL</th>
+                            <th>FOTOGRAFIA</th>
+                            <th>ACCIONES</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for provincia in provincias %}
+                            <tr>
+                                <td>{{ provincia.id_bg }}</td>
+                                <td>{{ provincia.nombre_bg }}</td>
+                                <td>{{ provincia.poblacion_bg }}</td>
+                                <td>{{ provincia.capital_bg }}</td>
+                                <td>{% if provincia.fotografia %}
+                                    <a href="{{provincia.fotografia.url}}" target="_blank">
+                                        <img src="{{provincia.fotografia.url}}" alt="" height="50px"></a>
+                                    {% else %}
+                                    <b>N/A</b>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="/editarProvincia/{{provincia.id_bg}}" class="btn btn-warning">Editar</a>
+                                    <a href="javascript:void(0)"
+                                    onclick="eliminarProvincia('/eliminarProvincia/{{provincia.id_bg}}');"class="btn btn-danger">Eliminar</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <!-- Agregar una fila para la imagen debajo de la tabla -->
+            <br>
+
+
+    </ul>
+
+    <script type="text/javascript">
+function eliminarProvincia(url) {
+  iziToast.question({
+      timeout: 15000,
+      close: true,
+      overlay: true,
+      displayMode: 'once',
+      id: 'question',
+      zindex: 999,
+      title: 'CONFIRMACIÓN',
+      message: '¿Está seguro de eliminar el cliente seleccionado?',
+      position: 'center',
+      buttons: [
+          ['<button><b>SI</b></button>', function (instance, toast) {
+              instance.hide({ transitionOut: 'fadeOut' }, toast, 'button');
+              window.location.href=url;
+          }, true],
+          ['<button>NO</button>', function (instance, toast) {
+
+              instance.hide({ transitionOut: 'fadeOut' }, toast, 'button');
+
+          }],
+      ]
+  });
+}
+</script>
+    <script type="text/javascript">
+       $("#frm_nuevo_provincia").validate({
+         rules:{
+           "nombre_bg":{
+             required:true
+
+           },
+           "poblacion_bg":{
+             required:true,
+             number:true
+           },
+           "capital_bg":{
+             required:true
+           },
+           "fotografia":{
+             required:true
+           }
+
+         },
+         messages:{
+
+           "nombre_bg":{
+             required:"DEBE INGRESAR EL NOMBRE DE LA PROVINCIA"
+
+           },
+           "poblacion_bg": {
+             required: "DEBE INGRESAR LA POBLACION DE LA PROVINCIA",
+             number: "INGRESE SOLO NÚMEROS EN LA POBLACIÓN"
+           },
+           "capital_bg":{
+             required:"DEBE INGRESAR LA CAPITAL DE LA PROVINCIA"
+
+           },
+           "fotografia":{
+             required:"SELECCIONE LA FOTOGRAFIA DE LA PROVINCIA"
+           }
+         }
+       });
+    </script>
+
+    <script type="text/javascript">
+           //let table = new DataTable('#tbl_clientes');
+            $('#tbl_provincias').DataTable( {
+              "language": {
+                "url": "https://cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json"
+            },
+              dom: 'Bfrtip',
+              buttons: [
+                  {
+                      extend: 'pdfHtml5',
+                      messageTop: 'REPORTE DE CLIENTES - DJANGO Y DATATABLES.'
+                  },
+                  'print',
+                  'csv'
+              ]
+            } );
+          </script>
+
+
+  {%endblock%}

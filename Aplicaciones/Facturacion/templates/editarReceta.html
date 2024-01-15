@@ -1,0 +1,66 @@
+{% extends "./plantilla.html" %}
+{% load static %}
+
+{% block contenido %}
+<div class="row">
+  <div class="col-md-2">
+  </div>
+  <div class="col-md-8">
+    <br> <br>
+    <form class="" action="/procesarActualizacionReceta/" method="post">
+
+      {% csrf_token %}
+      <b>Seleccione el platillo</b>
+      <select class="form-control" name="id_platillo" id="id_platillo" required>
+        <option value="">--Seleccione el platillo  --</option>
+        {% for platillo in platillos %}
+        <option value="{{platillo.id_bg}}">{{platillo.nombre_bg}}  </option>
+        {% endfor %}
+      </select>
+      <b>Seleccione el ingrediente</b>
+      <select class="form-control" name="id_ingrediente" id="id_ingrediente" required>
+        <option value="">--Seleccione el ingrediente  --</option>
+        {% for ingrediente in ingredientes %}
+        <option value="{{ingrediente.id_bg}}">{{ingrediente.nombre_bg}}-{{ingrediente.fecha_caducidad_bg}}  </option>
+        {% endfor %}
+      </select>
+
+      <script type="text/javascript">
+          document.getElementById('id_platillo').value="{{receta.platillo_bg.id_bg}}"
+      </script>
+
+      <script type="text/javascript">
+          document.getElementById('id_ingrediente').value="{{receta.ingrediente_bg.id_bg}}"
+      </script>
+
+<br>
+
+<input type="hidden" name="id_bg" value="{{receta.id_bg}}">
+<b>CANTIDAD</b>
+<br>
+<input type="number" name="cantidad_bg" id="cantidad_bg"
+       value="{{receta.cantidad_bg}}" placeholder="Ingrese la cantidad"
+       class="form-control" required>
+<br>
+      <b>PROCEDIMIENTO</b>
+      <br>
+      <input type="text" name="procedimiento_bg" id="procedimiento_bg"
+             value="{{receta.procedimiento_bg}}" placeholder="Ingrese el procedimiento"
+             class="form-control" required>
+      <br>
+
+
+      <center>
+        <button type="submit" name="button"
+                class="btn btn-warning">
+          &nbsp;&nbsp;&nbsp;Editar&nbsp;&nbsp;&nbsp;
+        </button>&nbsp;&nbsp;&nbsp;&nbsp;
+        <a href="/"
+           class="btn btn-danger">
+          Cancelar
+        </a>
+      </center>
+    </form>
+  </div>
+</div>
+{% endblock %}

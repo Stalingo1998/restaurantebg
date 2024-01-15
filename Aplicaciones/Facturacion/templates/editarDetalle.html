@@ -1,0 +1,70 @@
+{% extends "./plantilla.html" %}
+{% load static %}
+
+{% block contenido %}
+<div class="row">
+  <div class="col-md-2">
+  </div>
+  <div class="col-md-8">
+    <br> <br>
+    <form class="" action="/procesarActualizacionDetalle/" method="post">
+
+      {% csrf_token %}
+      <b>Seleccione el platillo</b>
+      <select class="form-control" name="id_platillo" id="id_platillo" required>
+        <option value="">--Seleccione el platillo  --</option>
+        {% for platillo in platillos %}
+        <option value="{{platillo.id_bg}}">{{platillo.nombre_bg}}  </option>
+        {% endfor %}
+      </select>
+      <b>Seleccione el pedido</b>
+      <select class="form-control" name="id_pedido" id="id_pedido" required>
+        <option value="">--Seleccione el pedido  --</option>
+        {% for pedido in pedidos %}
+        <option value="{{pedido.id_bg}}">{{pedido.estado_bg}}-{{pedido.observaciones_bg}}-{{detalle.pedido_bg.cliente_bg.nombre_bg}}  </option>
+        {% endfor %}
+      </select>
+
+      <script type="text/javascript">
+          document.getElementById('id_platillo').value="{{detalle.platillo_bg.id_bg}}"
+      </script>
+
+      <script type="text/javascript">
+          document.getElementById('id_pedido').value="{{detalle.pedido_bg.id_bg}}"
+      </script>
+
+<br>
+
+<input type="hidden" name="id_bg" value="{{detalle.id_bg}}">
+<b>DESCRIPCION</b>
+<br>
+<input type="text" name="descripcion_bg" id="descripcion_bg"
+       value="{{detalle.descripcion_bg}}" placeholder="Ingrese la descripcion"
+       class="form-control" required>
+<br>
+      <b>CALORIAS</b>
+      <br>
+      <input type="number" name="calorias_bg" id="calorias_bg"
+             value="{{detalle.calorias_bg}}" placeholder="Ingrese las calorias"
+             class="form-control" required>
+      <br>
+      <b>FECHA </b>
+      <input type="date" name="fecha_bg" id="fecha_bg"
+      value="{{detalle.fecha_bg|date:'Y-m-d'}}" placeholder="Ingrese la fecha "
+      class="form-control" required>
+      <br>
+
+      <center>
+        <button type="submit" name="button"
+                class="btn btn-warning">
+          &nbsp;&nbsp;&nbsp;Editar&nbsp;&nbsp;&nbsp;
+        </button>&nbsp;&nbsp;&nbsp;&nbsp;
+        <a href="/"
+           class="btn btn-danger">
+          Cancelar
+        </a>
+      </center>
+    </form>
+  </div>
+</div>
+{% endblock %}
